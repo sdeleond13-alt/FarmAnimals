@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="sticker">
+  <title>Farm Animals — Picture Flashcards about Farm Animals</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-grid">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-top-bar">
+        <div class="brand-group">
+          <h1 class="display">Farm Animals <em>English Course</em></h1>
+          <p class="subtitle">Tap a picture to hear its sound, or flip the card to learn a fun fact!</p>
+        </div>
+
+        <!-- ESPACIO PARA TU LOGO (Superior derecha, a la par del título) -->
+      <div class="logo-slot" title="Logo Advance">
+        <img src="LogoAdvacnce.png" alt="Logo Advance" class="brand-logo">
+      </div>
+
+      <div class="header-controls">
+        <div class="segmented" role="tablist" aria-label="App mode">
+          <button type="button" id="mode-cards-btn" class="seg-btn is-active" role="tab" aria-selected="true" onclick="setMode('cards')">
+            <i data-lucide="layers" aria-hidden="true"></i>
+            <span>Picture Cards</span>
+          </button>
+          <button type="button" id="mode-game-btn" class="seg-btn" role="tab" aria-selected="false" onclick="setMode('game')">
+            <i data-lucide="music" aria-hidden="true"></i>
+            <span>Sound Game</span>
+          </button>
+        </div>
+
+        <button type="button" id="voice-toggle-btn" class="pill-btn is-on" aria-pressed="true" onclick="toggleVoice()">
+          <i data-lucide="message-circle" aria-hidden="true"></i>
+          <span id="voice-toggle-label">Voice: On</span>
+        </button>
+
+        <div class="star-counter" aria-live="polite" title="Animals discovered">
+          <i data-lucide="star" aria-hidden="true"></i>
+          <span id="star-count-text">0 / 16</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress Strip -->
+    <div class="progress-wrap" aria-label="Discovery progress">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span class="progress-label" id="progress-label">Card 1 of 16</span>
+    </div>
+
+    <!-- PICTURE CARDS MODE -->
+    <main id="cards-view">
+      <!-- Category Filters -->
+      <div class="filter-bar" role="group" aria-label="Filter farm animals">
+        <button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true" onclick="setFilter('all')">
+          <i data-lucide="sparkles" aria-hidden="true"></i>
+          <span>All Animals (16)</span>
+        </button>
+        <button type="button" class="filter-chip" data-filter="adult" aria-pressed="false" onclick="setFilter('adult')">
+          <i data-lucide="paw-print" aria-hidden="true"></i>
+          <span>Grown-Ups (10)</span>
+        </button>
+        <button type="button" class="filter-chip" data-filter="baby" aria-pressed="false" onclick="setFilter('baby')">
+          <i data-lucide="heart" aria-hidden="true"></i>
+          <span>Baby Animals (6)</span>
+        </button>
+        <button type="button" class="filter-chip" data-filter="paired" aria-pressed="false" onclick="setFilter('paired')">
+          <i data-lucide="users" aria-hidden="true"></i>
+          <span>Parent &amp; Baby Pairs (12)</span>
+        </button>
+      </div>
+
+      <!-- Flashcard Stage -->
+      <section class="stage-grid" aria-label="Flashcard viewer" style="margin-top: var(--space-lg);">
+        <button type="button" class="nav-circle-btn" onclick="prevCard()" aria-label="Previous animal card">
+          <i data-lucide="arrow-left" aria-hidden="true"></i>
+        </button>
+
+        <div class="flashcard-scene">
+          <div class="flashcard" id="flashcard" onclick="handleCardClick(event)" role="button" tabindex="0" aria-label="Flip animal flashcard" onkeydown="handleCardKeydown(event)">
+            <!-- Front Face -->
+            <div class="flashcard-face flashcard-front tint-pink" id="card-front">
+              <div class="card-top-row">
+                <span class="role-badge is-adult" id="front-role-badge">Grown-Up</span>
+                <button type="button" class="pair-jump-btn hidden-view" id="front-pair-btn" onclick="jumpToPartner(event)">
+                  <i data-lucide="heart-handshake" aria-hidden="true"></i>
+                  <span id="front-pair-label">See Baby</span>
+                </button>
+              </div>
+
+              <div class="illustration-wrap" id="front-illustration-wrap">
+                <div class="sound-bubble" id="sound-bubble">Moo!</div>
+                <div id="front-svg-slot" style="width: 100%; display: flex; justify-content: center;"></div>
+              </div>
+
+              <div class="card-bottom-front">
+                <div class="animal-title-group">
+                  <h2 class="animal-name" id="front-name">Chicken</h2>
+                  <span class="animal-sound-word" id="front-sound">Cluck-cluck!</span>
+                </div>
+                <span class="card-mini-flip-hint">
+                  <i data-lucide="rotate-cw" aria-hidden="true"></i>
+                  <span>Tap to Flip</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Back Face -->
+            <div class="flashcard-face flashcard-back tint-sky" id="card-back">
+              <div class="back-header">
+                <div style="display: flex; align-items: center; gap: var(--space-md);">
+                  <div class="back-mini-portrait" id="back-mini-svg"></div>
+                  <div>
+                    <h2 class="animal-name" id="back-name" style="font-size: var(--headline-size);">Chicken</h2>
+                    <span class="animal-sound-word" id="back-sound">Cluck-cluck!</span>
+                  </div>
+                </div>
+                <span class="card-mini-flip-hint">
+                  <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+                  <span>Front</span>
+                </span>
+              </div>
+
+              <div class="fact-visual-slab">
+                <div class="fact-icon-circle" id="back-fact-icon"></div>
+                <span class="fact-chip-label" id="back-fact-tag">Fun Farm Fact</span>
+                <p class="fact-text" id="back-fact-text">Hens cluck and lay eggs. They can recognize over 100 human faces!</p>
+              </div>
+
+              <div style="width: 100%; display: flex; justify-content: center;">
+                <button type="button" class="btn-giant btn-primary-giant" id="back-read-btn" onclick="speakFact(event)" style="min-height: 52px; padding: var(--space-sm) var(--space-lg); font-size: 1.05rem;">
+                  <i data-lucide="volume-2" aria-hidden="true"></i>
+                  <span>Hear Fun Fact</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="nav-circle-btn" onclick="nextCard()" aria-label="Next animal card">
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+      </section>
+
+      <!-- Mobile Prev/Next Row -->
+      <div class="mobile-nav-row" style="margin-top: var(--space-md);">
+        <button type="button" class="nav-circle-btn" onclick="prevCard()" aria-label="Previous animal card">
+          <i data-lucide="arrow-left" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="nav-circle-btn" onclick="nextCard()" aria-label="Next animal card">
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Big Preschool Action Dock -->
+      <div class="action-dock" style="margin-top: var(--space-lg);">
+        <button type="button" class="btn-giant btn-primary-giant" id="play-sound-btn" onclick="triggerAnimalSound()">
+          <i data-lucide="volume-2" aria-hidden="true"></i>
+          <span id="play-sound-btn-label">Hear Cluck-cluck!</span>
+        </button>
+        <button type="button" class="btn-giant btn-secondary-giant" id="flip-card-btn" onclick="toggleFlip()">
+          <i data-lucide="rotate-cw" aria-hidden="true"></i>
+          <span id="flip-card-btn-label">Flip Card</span>
+        </button>
+      </div>
+
+      <!-- 16-Animal Picture Sticker Tray -->
+      <section class="tray-section" aria-label="All farm animals picture picker" style="margin-top: var(--space-xl);">
+        <h2 class="section-heading">Pick Any Animal Picture</h2>
+        <div class="tray-grid" id="tray-grid"></div>
+      </section>
+    </main>
+
+    <!-- SOUND GAME MODE -->
+    <main id="game-view" class="hidden-view">
+      <section class="game-panel" aria-label="Animal sound matching game">
+        <h2 class="section-heading">Who Made That Sound?</h2>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-md);">
+          <button type="button" class="btn-giant btn-primary-giant" onclick="replayGameSound()">
+            <i data-lucide="volume-2" aria-hidden="true"></i>
+            <span>Play Animal Sound</span>
+          </button>
+          <div class="game-prompt-bubble" id="game-sound-bubble">
+            <i data-lucide="music" aria-hidden="true"></i>
+            <span id="game-sound-text">Moo!</span>
+          </div>
+        </div>
+
+        <div class="game-choices-grid" id="game-choices-grid"></div>
+
+        <div class="game-feedback" id="game-feedback" aria-live="polite">
+          Tap the animal picture that matches the sound!
+        </div>
+
+        <button type="button" class="btn-giant btn-secondary-giant hidden-view" id="game-next-btn" onclick="nextGameRound()">
+          <i data-lucide="sparkles" aria-hidden="true"></i>
+          <span>Next Animal</span>
+        </button>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p class="footer-note">
+        Grounded in <em>Research report: Farm Animals for Kids</em> (LearnLink, The Tiny Tutors, MadeForMums, National Zoo &amp; Ag in Classroom, Iowa Ag Literacy Foundation).
+      </p>
+      <button type="button" class="reset-btn" id="reset-progress-btn" onclick="handleResetClick(this)">
+        <i data-lucide="refresh-cw" aria-hidden="true"></i>
+        <span>Start Over</span>
+      </button>
+    </footer>
+  </div>
+
+  <api-shim></api-shim>
+  <script src="script.js"></script>
+</body>
+</html>
